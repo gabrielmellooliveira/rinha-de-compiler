@@ -1,0 +1,5 @@
+let hello = fn (name) => {
+  print("Hello, " + name + "! :D")
+};
+
+hello("Gabriel Mello")
