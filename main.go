@@ -35,7 +35,7 @@ func main() {
 }
 
 const RINHA_PATH string = "/var/rinha/"
-const RINHA_DEFAULT_FILE string = "run-print.rinha.json"
+const RINHA_DEFAULT_FILE string = "source.rinha.json"
 
 func GetFileName() string {
 	args := os.Args
