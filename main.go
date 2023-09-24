@@ -34,8 +34,8 @@ func main() {
 	interpreter.Execute(ast.Expression, environment)
 }
 
-const RINHA_PATH string = "./var/rinha/"
-const RINHA_DEFAULT_FILE string = "source.rinha.json"
+const RINHA_PATH string = "/var/rinha/"
+const RINHA_DEFAULT_FILE string = "run-print.rinha.json"
 
 func GetFileName() string {
 	args := os.Args
