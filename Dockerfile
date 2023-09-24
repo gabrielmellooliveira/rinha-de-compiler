@@ -2,7 +2,7 @@ FROM  golang:1.20-alpine as builder
 
 ENV CGO_ENABLED=0
 
-WORKDIR /
+WORKDIR /app
 COPY . .
 
 RUN go mod download

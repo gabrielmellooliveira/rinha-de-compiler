@@ -5,16 +5,18 @@ import (
 	interpreter "github.com/gabrielmellooliveira/rinha-de-compiler/src"
 	"github.com/gabrielmellooliveira/rinha-de-compiler/src/models"
 	"os"
+	"path"
 )
-
-const RINHA_SOURCE_PATH string = "./var/rinha/source.rinha.json"
 
 func main() {
 	// Rodar esse comando para executar os testes
 	// test.RunTests()
 
+	// Capturar o nome do arquivo
+	fileName := GetFileName()
+
 	// Ler o arquivo
-	content, err := os.ReadFile(RINHA_SOURCE_PATH)
+	content, err := os.ReadFile(fileName)
 	if err != nil {
 		panic("Erro ao ler arquivo da rinha: " + err.Error())
 	}
@@ -30,4 +32,26 @@ func main() {
 	// Executar o código
 	environment := make(map[string]interface{})
 	interpreter.Execute(ast.Expression, environment)
+}
+
+const RINHA_PATH string = "./var/rinha/"
+const RINHA_DEFAULT_FILE string = "source.rinha.json"
+
+func GetFileName() string {
+	args := os.Args
+
+	if len(args) < 2 {
+		return RINHA_PATH + RINHA_DEFAULT_FILE
+	} else {
+		fileName := args[1]
+		ext := path.Ext(fileName)
+
+		if ext == ".json" {
+			return RINHA_PATH + fileName
+		} else if ext == ".rinha" {
+			return RINHA_PATH + fileName + ".json"
+		} else {
+			return RINHA_PATH + fileName + ".rinha.json"
+		}
+	}
 }
