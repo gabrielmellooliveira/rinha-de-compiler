@@ -11,7 +11,7 @@ See more at [Rinha de compiler](https://github.com/aripiprazole/rinha-de-compile
 To execute the interpreter using the Go command-line interface (CLI), simply enter the following command in your terminal:
 
 ```bash
-go run main.go
+go run main.go <filename>
 ```
 
 ### Running with Docker 🐳
@@ -19,19 +19,13 @@ go run main.go
 Start by building a Docker image from the project:
 
 ```bash
-docker build -t go-interpreter .
+docker build -t go-rinha .
 ```
 
 Once the image is built, you can run the interpreter within a Docker container.
 
 ```bash
-docker run -dp 3000:3000 go-interpreter
-```
-
-If you prefer to see the interpreter's output interactively:
-
-```bash
-docker run -it --rm go-interpreter
+docker run -it go-rinha <filename>
 ```
 
 **Note:** All executions (CLI or docker) use the content present in `var/rinha/source.rinha.json` to interpret.
