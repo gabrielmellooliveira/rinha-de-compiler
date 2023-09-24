@@ -61,27 +61,40 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 		op := models.GetField(expression, "op").(string)
 
 		if op == "Add" {
-			return operations.BinaryOperationFloat64(lhs.(float64), rhs.(float64), op)
-			// return operations.BinaryAddOperation(lhs, rhs)
+			if reflect.TypeOf(lhs).Kind() == reflect.Float64 {
+				lhs = int32(lhs.(float64))
+			}
+
+			if reflect.TypeOf(rhs).Kind() == reflect.Float64 {
+				rhs = int32(rhs.(float64))
+			}
+
+			/*if reflect.TypeOf(lhs).Kind() == reflect.Float64 && reflect.TypeOf(rhs).Kind() == reflect.Float64 {
+				return operations.BinaryOperationFloat64(lhs.(float64), rhs.(float64), op)
+			}*/
+
+			if reflect.TypeOf(lhs).Kind() == reflect.String || reflect.TypeOf(rhs).Kind() == reflect.String {
+				return operations.BinaryAddOperation(lhs, rhs)
+			}
+
+			return operations.BinaryOperation((lhs).(int32), (rhs).(int32), op)
 		}
 
 		if op == "And" || op == "Or" {
 			return operations.BinaryBoolOperation((lhs).(bool), (rhs).(bool), op)
 		}
 
-		return operations.BinaryOperationFloat64(lhs.(float64), rhs.(float64), op)
+		// return operations.BinaryOperation((lhs).(int32), (rhs).(int32), op)
 
 		if reflect.TypeOf(lhs).Kind() == reflect.Float64 {
-			fmt.Println("Convert - Type of variable LHS:", reflect.TypeOf(lhs).Kind().String())
 			lhs = int32(lhs.(float64))
 		}
 
 		if reflect.TypeOf(rhs).Kind() == reflect.Float64 {
-			fmt.Println("Convert - Type of variable RHS:", reflect.TypeOf(rhs).Kind().String())
 			rhs = int32(rhs.(float64))
 		}
 
-		// return operations.BinaryOperation((lhs).(int32), (rhs).(int32), op)
+		return operations.BinaryOperation((lhs).(int32), (rhs).(int32), op)
 
 	case "Let":
 		value := Execute(models.GetField(expression, "value"), environment)
@@ -118,18 +131,39 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 			value := models.GetField(expression, "value")
 			_, err := models.GetFieldWithError(value, "kind")
 
-			if models.GetField(value, "kind") == "Var" {
-				fmt.Println("variável com o nome:", models.GetField(value, "text"))
-				return nil
-			}
-
 			if err != nil {
-				fmt.Println("Type of variable VALUE: 3", reflect.TypeOf(value))
 				tuple := Execute(value, environment)
 				first := Execute(models.GetField(tuple, "first"), environment)
 				second := Execute(models.GetField(tuple, "second"), environment)
 
 				fmt.Println(first, "|", second)
+				return nil
+			}
+
+			if models.GetField(value, "kind") == "Var" {
+				variable := Execute(value, environment)
+				variableKind, err := models.GetFieldWithError(variable, "kind")
+
+				if err != nil {
+					fmt.Println(variable)
+					return nil
+				}
+
+				if variableKind == "Tuple" {
+					tuple := Execute(variable, environment)
+					first := Execute(models.GetField(tuple, "first"), environment)
+					second := Execute(models.GetField(tuple, "second"), environment)
+
+					fmt.Println(first, "|", second)
+					return nil
+				}
+
+				if variableKind == "Function" {
+					fmt.Println("<#closure>")
+					return nil
+				}
+
+				fmt.Println("variável com o nome:", models.GetField(value, "text"))
 				return nil
 			}
 

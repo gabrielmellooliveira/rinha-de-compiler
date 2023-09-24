@@ -2,11 +2,12 @@ package operations
 
 import (
 	"fmt"
-	"math/big"
 )
 
 func BinaryOperation(lhs int32, rhs int32, op string) interface{} {
 	switch op {
+	case "Add":
+		return lhs + rhs
 	case "Sub":
 		return lhs - rhs
 	case "Mul":
@@ -45,7 +46,7 @@ func BinaryOperationFloat64(lhs float64, rhs float64, op string) interface{} {
 	case "Mul":
 		return lhs * rhs
 	case "Div":
-		if rhs == 0 {
+		if rhs == 0.0 {
 			panic("Não é possivel realizar divisão por zero")
 		}
 
@@ -70,20 +71,20 @@ func BinaryOperationFloat64(lhs float64, rhs float64, op string) interface{} {
 }
 
 func BinaryAddOperation(lhs interface{}, rhs interface{}) interface{} {
-	if intLhs, ok := lhs.(*big.Int); ok {
-		if intRhs, ok := rhs.(*big.Int); ok {
-			fmt.Println("BinaryAddOperation 1:", new(big.Int).Add(intRhs, intLhs))
-			return new(big.Int).Add(intRhs, intLhs)
+	if intLhs, ok := lhs.(int32); ok {
+		if intRhs, ok := rhs.(int32); ok {
+			// fmt.Println("BinaryAddOperation 1:", intRhs+intLhs)
+			return intRhs + intLhs
 		} else if strRhs, ok := rhs.(string); ok {
-			fmt.Printf("%d%s", intLhs, strRhs)
+			// fmt.Printf("%d%s", intLhs, strRhs)
 			return fmt.Sprintf("%d%s", intLhs, strRhs)
 		}
 	} else if strLhs, ok := lhs.(string); ok {
-		if intRhs, ok := rhs.(*big.Int); ok {
-			fmt.Printf("%s%d", strLhs, intRhs)
+		if intRhs, ok := rhs.(int32); ok {
+			// fmt.Printf("%s%d", strLhs, intRhs)
 			return fmt.Sprintf("%s%d", strLhs, intRhs)
 		} else if strRhs, ok := rhs.(string); ok {
-			fmt.Printf("%s%s", strLhs, strRhs)
+			// fmt.Printf("%s%s", strLhs, strRhs)
 			return fmt.Sprintf("%s%s", strLhs, strRhs)
 		}
 	}
