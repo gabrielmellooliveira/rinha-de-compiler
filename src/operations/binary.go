@@ -2,6 +2,7 @@ package operations
 
 import (
 	"fmt"
+	"reflect"
 )
 
 func BinaryOperation(lhs int32, rhs int32, op string) interface{} {
@@ -70,10 +71,41 @@ func BinaryOperationFloat64(lhs float64, rhs float64, op string) interface{} {
 	}
 }
 
+func BinaryEqOperation(lhs interface{}, rhs interface{}) bool {
+	if reflect.TypeOf(lhs).Kind() == reflect.Float64 {
+		lhs = int32(lhs.(float64))
+	}
+
+	if reflect.TypeOf(rhs).Kind() == reflect.Float64 {
+		rhs = int32(rhs.(float64))
+	}
+
+	if reflect.TypeOf(lhs).Kind() == reflect.String || reflect.TypeOf(rhs).Kind() == reflect.String {
+		return lhs == rhs
+	}
+
+	return (lhs).(int32) == (rhs).(int32)
+}
+
+func BinaryNeqOperation(lhs interface{}, rhs interface{}) bool {
+	if reflect.TypeOf(lhs).Kind() == reflect.Float64 {
+		lhs = int32(lhs.(float64))
+	}
+
+	if reflect.TypeOf(rhs).Kind() == reflect.Float64 {
+		rhs = int32(rhs.(float64))
+	}
+
+	if reflect.TypeOf(lhs).Kind() == reflect.String || reflect.TypeOf(rhs).Kind() == reflect.String {
+		return lhs != rhs
+	}
+
+	return (lhs).(int32) != (rhs).(int32)
+}
+
 func BinaryAddOperation(lhs interface{}, rhs interface{}) interface{} {
 	if intLhs, ok := lhs.(int32); ok {
 		if intRhs, ok := rhs.(int32); ok {
-			// fmt.Println("BinaryAddOperation 1:", intRhs+intLhs)
 			return intRhs + intLhs
 		} else if strRhs, ok := rhs.(string); ok {
 			// fmt.Printf("%d%s", intLhs, strRhs)
@@ -81,10 +113,8 @@ func BinaryAddOperation(lhs interface{}, rhs interface{}) interface{} {
 		}
 	} else if strLhs, ok := lhs.(string); ok {
 		if intRhs, ok := rhs.(int32); ok {
-			// fmt.Printf("%s%d", strLhs, intRhs)
 			return fmt.Sprintf("%s%d", strLhs, intRhs)
 		} else if strRhs, ok := rhs.(string); ok {
-			// fmt.Printf("%s%s", strLhs, strRhs)
 			return fmt.Sprintf("%s%s", strLhs, strRhs)
 		}
 	}

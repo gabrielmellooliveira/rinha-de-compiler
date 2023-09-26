@@ -80,6 +80,14 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 			return operations.BinaryOperation((lhs).(int32), (rhs).(int32), op)
 		}
 
+		if op == "Eq" {
+			return operations.BinaryEqOperation(lhs, rhs)
+		}
+
+		if op == "Neq" {
+			return operations.BinaryNeqOperation(lhs, rhs)
+		}
+
 		if op == "And" || op == "Or" {
 			return operations.BinaryBoolOperation((lhs).(bool), (rhs).(bool), op)
 		}
@@ -137,7 +145,7 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 				second := Execute(models.GetField(tuple, "second"), environment)
 
 				fmt.Println(first, "|", second)
-				return nil
+				return tuple
 			}
 
 			if models.GetField(value, "kind") == "Var" {
@@ -146,7 +154,7 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 
 				if err != nil {
 					fmt.Println(variable)
-					return nil
+					return variable
 				}
 
 				if variableKind == "Tuple" {
@@ -155,21 +163,22 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 					second := Execute(models.GetField(tuple, "second"), environment)
 
 					fmt.Println(first, "|", second)
-					return nil
+					return variable
 				}
 
 				if variableKind == "Function" {
 					fmt.Println("<#closure>")
-					return nil
+					return variable
 				}
 
 				fmt.Println("variável com o nome:", models.GetField(value, "text"))
-				return nil
+				return variable
 			}
 
 			fmt.Println(value)
 		} else {
 			fmt.Println(Execute(models.GetField(expression, "value"), environment))
+			return expression
 		}
 
 	case "Tuple":
