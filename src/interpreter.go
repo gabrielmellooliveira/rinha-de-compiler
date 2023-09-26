@@ -145,7 +145,7 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 				second := Execute(models.GetField(tuple, "second"), environment)
 
 				fmt.Println(first, "|", second)
-				return tuple
+				return expression
 			}
 
 			if models.GetField(value, "kind") == "Var" {
@@ -154,7 +154,7 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 
 				if err != nil {
 					fmt.Println(variable)
-					return variable
+					return expression
 				}
 
 				if variableKind == "Tuple" {
@@ -163,16 +163,16 @@ func Execute(expression interface{}, environment map[string]interface{}) interfa
 					second := Execute(models.GetField(tuple, "second"), environment)
 
 					fmt.Println(first, "|", second)
-					return variable
+					return expression
 				}
 
 				if variableKind == "Function" {
 					fmt.Println("<#closure>")
-					return variable
+					return expression
 				}
 
 				fmt.Println("variável com o nome:", models.GetField(value, "text"))
-				return variable
+				return expression
 			}
 
 			fmt.Println(value)
